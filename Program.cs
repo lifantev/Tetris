@@ -6,9 +6,9 @@ namespace Tetris
 		{
 				static void Main(string[] args)
 				{
-						Console.SetWindowSize(30, 20);
-						Console.SetBufferSize(30, 20);
-						Console.SetWindowSize(30, 20);
+						Console.SetWindowSize(Field.WIDHT, Field.HEIGHT);
+						Console.SetBufferSize(Field.WIDHT, Field.HEIGHT);
+						Console.SetWindowSize(Field.WIDHT, Field.HEIGHT);
 
 						FigureGenerator generator = new FigureGenerator(15, 0, '*');
 						Figure currentFigure = generator.GetNewFigure();
@@ -35,6 +35,9 @@ namespace Tetris
 										break;
 								case ConsoleKey.DownArrow:
 										currentFigure.TryMove(Direction.DOWN);
+										break;
+								case ConsoleKey.Spacebar:
+										currentFigure.TryRotate();
 										break;
 								default:
 										break;
