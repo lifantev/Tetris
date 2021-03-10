@@ -4,12 +4,9 @@ namespace Tetris
 {
 		class Program
 		{
+
 				static void Main(string[] args)
 				{
-						Console.SetWindowSize(Field.WIDHT, Field.HEIGHT);
-						Console.SetBufferSize(Field.WIDHT, Field.HEIGHT);
-						Console.SetWindowSize(Field.WIDHT, Field.HEIGHT);
-
 						FigureGenerator generator = new FigureGenerator(15, 0, '*');
 						Figure currentFigure = generator.GetNewFigure();
 
