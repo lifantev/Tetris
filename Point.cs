@@ -33,6 +33,7 @@ namespace Tetris
 				{
 						Console.SetCursorPosition(X, Y);
 						Console.Write(Sym);
+						Console.CursorVisible = false;
 				}
 
 				public void Hide()
@@ -52,7 +53,7 @@ namespace Tetris
 										X++;
 										break;
 								case Direction.DOWN:
-										Y--;
+										Y++;
 										break;
 								default:
 										break;

@@ -32,7 +32,6 @@ namespace Tetris
 								default:
 										return default;
 						}
-
 				}
 
 		}
