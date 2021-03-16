@@ -17,9 +17,9 @@ namespace Tetris
 						}
 				}
 
-				public void Move(Point[] pList, Direction dir)
+				public void Move(Direction dir)
 				{
-						foreach (var p in pList)
+						foreach (var p in Points)
 						{
 								p.Move(dir);
 						}
@@ -28,22 +28,37 @@ namespace Tetris
 				internal Result TryMove(Direction dir)
 				{
 						Hide();
+						Move(dir);
 
-						var clone = Clone();
-						Move(clone, dir);
-
-						var result = VerifyPosition(clone);
-						if (result == Result.SUCCESS)
-								Points = clone;
+						var result = VerifyPosition();
+						if (result != Result.SUCCESS)
+								Move(Reverse(dir);
 
 						Draw();
 
 						return result;
 				}
 
-				private Result VerifyPosition(Point[] pList)
+				private Direction Reverse(Direction dir)
 				{
-						foreach (var p in pList)
+						switch (dir)
+						{
+								case Direction.LEFT:
+										return Direction.RIGHT;
+								case Direction.RIGHT:
+										return Direction.LEFT;
+								case Direction.DOWN:
+										return Direction.UP;
+								case Direction.UP:
+										return Direction.DOWN;
+						}
+
+						return dir;
+				}
+
+				private Result VerifyPosition()
+				{
+						foreach (var p in Points)
 						{
 								if (p.Y >= Field.Height)
 										return Result.DOWN_BORDER_STRIKE;
@@ -58,18 +73,6 @@ namespace Tetris
 						return Result.SUCCESS;
 				}
 
-				private Point[] Clone()
-				{
-						var newPoints = new Point[POINT_NUMBER];
-						for (int i = 0; i < POINT_NUMBER; i++)
-						{
-								newPoints[i] = new Point(Points[i]);
-						}
-
-						return newPoints;
-				}
-
-
 				internal void Hide()
 				{
 						foreach (Point p in Points)
@@ -78,22 +81,26 @@ namespace Tetris
 						}
 				}
 
-				public abstract void Rotate(Point[] pList);
+				public abstract void Rotate();
 
 				internal Result TryRotate()
 				{
 						Hide();
 
-						var clone = Clone();
-						Rotate(clone);
+						Rotate();
 
-						var result = VerifyPosition(clone);
-						if (result == Result.SUCCESS)
-								Points = clone;
+						var result = VerifyPosition();
+						if (result != Result.SUCCESS)
+								Rotate();
 
 						Draw();
 
 						return result;
+				}
+
+				internal bool IsOnTop()
+				{
+						return Points[0].Y == 0;
 				}
 		}
 }
