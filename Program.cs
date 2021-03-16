@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Threading;
+using System.Timers;
 
 namespace Tetris
 {
 		class Program
 		{
 				static FigureGenerator generator;
+				static Figure currentFigure;
+
+				const int TIMER_INTERVAL = 500;
+				static System.Timers.Timer timer;
+				static private Object _lockObject = new object();
 
 				static void Main(string[] args)
 				{
@@ -12,17 +19,40 @@ namespace Tetris
 						Console.SetBufferSize(Field.Width, Field.Height);
 
 						generator = new FigureGenerator(15, 0, Drawer.DEF_SYMBOL);
-						Figure currentFigure = generator.GetNewFigure();
+						currentFigure = generator.GetNewFigure();
+						SetTimer();
 
 						while (true)
 						{
 								if (Console.KeyAvailable)
 								{
 										var key = Console.ReadKey();
+										Monitor.Enter(_lockObject);
+
 										var result = HandleKey(currentFigure, key);
 										ProcessResult(result, ref currentFigure);
+
+										Monitor.Exit(_lockObject);
 								}
 						}
+				}
+
+				private static void SetTimer()
+				{
+						timer = new System.Timers.Timer(TIMER_INTERVAL);
+						timer.Elapsed += OnTimeEvent;
+						timer.AutoReset = true;
+						timer.Enabled = true;
+				}
+
+				private static void OnTimeEvent(object sender, ElapsedEventArgs e)
+				{
+						Monitor.Enter(_lockObject);
+
+						var res = currentFigure.TryMove(Direction.DOWN);
+						ProcessResult(res, ref currentFigure);
+
+						Monitor.Exit(_lockObject);
 				}
 
 				private static bool ProcessResult(Result result, ref Figure currentFigure)
