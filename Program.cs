@@ -4,10 +4,14 @@ namespace Tetris
 {
 		class Program
 		{
+				static FigureGenerator generator;
 
 				static void Main(string[] args)
 				{
-						FigureGenerator generator = new FigureGenerator(15, 0, '*');
+						Console.SetWindowSize(Field.Width, Field.Height);
+						Console.SetBufferSize(Field.Width, Field.Height);
+
+						generator = new FigureGenerator(15, 0, Drawer.DEF_SYMBOL);
 						Figure currentFigure = generator.GetNewFigure();
 
 						while (true)
@@ -15,29 +19,39 @@ namespace Tetris
 								if (Console.KeyAvailable)
 								{
 										var key = Console.ReadKey();
-										HandleKey(currentFigure, key);
+										var result = HandleKey(currentFigure, key);
+										ProcessResult(result, ref currentFigure);
 								}
 						}
 				}
 
-				private static void HandleKey(Figure currentFigure, ConsoleKeyInfo key)
+				private static bool ProcessResult(Result result, ref Figure currentFigure)
+				{
+						if (result == Result.HEAP_STRIKE || result == Result.DOWN_BORDER_STRIKE)
+						{
+								Field.AddFigure(currentFigure);
+								Field.TryDeleteLines();
+								currentFigure = generator.GetNewFigure();
+								return true;
+						}
+						else
+								return false;
+				}
+
+				private static Result HandleKey(Figure currentFigure, ConsoleKeyInfo key)
 				{
 						switch (key.Key)
 						{
 								case ConsoleKey.RightArrow:
-										currentFigure.TryMove(Direction.RIGHT);
-										break;
+										return currentFigure.TryMove(Direction.RIGHT);
 								case ConsoleKey.LeftArrow:
-										currentFigure.TryMove(Direction.LEFT);
-										break;
+										return currentFigure.TryMove(Direction.LEFT);
 								case ConsoleKey.DownArrow:
-										currentFigure.TryMove(Direction.DOWN);
-										break;
+										return currentFigure.TryMove(Direction.DOWN);
 								case ConsoleKey.Spacebar:
-										currentFigure.TryRotate();
-										break;
+										return currentFigure.TryRotate();
 								default:
-										break;
+										return Result.SUCCESS;
 						}
 				}
 		}
