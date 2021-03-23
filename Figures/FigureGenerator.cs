@@ -8,15 +8,13 @@ namespace Tetris
 		{
 				private int _x;
 				private int _y;
-				private char _sym;
 
 				private Random _rand = new Random();
 
-				public FigureGenerator(int x, int y, char sym)
+				public FigureGenerator(int x, int y)
 				{
 						_x = x;
 						_y = y;
-						_sym = sym;
 				}
 
 				public Figure GetNewFigure()
@@ -26,12 +24,12 @@ namespace Tetris
 						switch (randomFigureType)
 						{
 								case (int)FigureType.SQUARE:
-										return new Square(_x, _y, _sym);
+										return new Square(_x, _y);
 								case (int)FigureType.STICK:
-										return new Stick(_x, _y, _sym);
-								default:
-										return default;
+										return new Stick(_x, _y);
 						}
+
+						return default;
 				}
 
 		}

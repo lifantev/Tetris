@@ -6,7 +6,7 @@ namespace Tetris
 {
 		static class Field
 		{
-				private static int _width = 30;
+				private static int _width = 20;
 				private static int _height = 20;
 
 				private static bool[][] _heap; 
@@ -17,24 +17,12 @@ namespace Tetris
 						{
 								return _width;
 						}
-						set
-						{
-								_height = value;
-								Console.SetBufferSize(_width, Field.Height);
-								Console.SetWindowSize(_width, Field.Height);
-						}
 				}
 				public static int Height
 				{
 						get
 						{
 								return _height;
-						}
-						set
-						{
-								_height = value;
-								Console.SetBufferSize(Field.Width, _height);
-								Console.SetWindowSize(Field.Width, _height);
 						}
 				} 
 				
@@ -76,9 +64,9 @@ namespace Tetris
 								for (int i = 0; i < Width; i++)
 								{
 										if (_heap[j][i])
-												Drawer.DrawPoint(i, j);
+												DrawerProvider.Drawer.DrawPoint(i, j);
 										else
-												Drawer.HidePoint(i, j);
+												DrawerProvider.Drawer.HidePoint(i, j);
 								}
 						}
 				}

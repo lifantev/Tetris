@@ -32,7 +32,7 @@ namespace Tetris
 
 						var result = VerifyPosition();
 						if (result != Result.SUCCESS)
-								Move(Reverse(dir);
+								Move(Reverse(dir));
 
 						Draw();
 

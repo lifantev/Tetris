@@ -15,10 +15,9 @@ namespace Tetris
 
 				static void Main(string[] args)
 				{
-						Console.SetWindowSize(Field.Width, Field.Height);
-						Console.SetBufferSize(Field.Width, Field.Height);
+						DrawerProvider.Drawer.InitField();
 
-						generator = new FigureGenerator(15, 0, Drawer.DEF_SYMBOL);
+						generator = new FigureGenerator(Field.Width/2, 0);
 						currentFigure = generator.GetNewFigure();
 						SetTimer();
 
@@ -29,7 +28,7 @@ namespace Tetris
 										var key = Console.ReadKey();
 										Monitor.Enter(_lockObject);
 
-										var result = HandleKey(currentFigure, key);
+										var result = HandleKey(currentFigure, key.Key);
 										ProcessResult(result, ref currentFigure);
 
 										Monitor.Exit(_lockObject);
@@ -40,17 +39,17 @@ namespace Tetris
 				private static void SetTimer()
 				{
 						timer = new System.Timers.Timer(TIMER_INTERVAL);
-						timer.Elapsed += OnTimeEvent;
+						timer.Elapsed += OnTimedEvent;
 						timer.AutoReset = true;
 						timer.Enabled = true;
 				}
 
-				private static void OnTimeEvent(object sender, ElapsedEventArgs e)
+				private static void OnTimedEvent(object sender, ElapsedEventArgs e)
 				{
 						Monitor.Enter(_lockObject);
 
-						var res = currentFigure.TryMove(Direction.DOWN);
-						ProcessResult(res, ref currentFigure);
+						var result = currentFigure.TryMove(Direction.DOWN);
+						ProcessResult(result, ref currentFigure);
 
 						Monitor.Exit(_lockObject);
 				}
@@ -64,8 +63,8 @@ namespace Tetris
 
 								if (currentFigure.IsOnTop())
 								{
-										GameOver();
-										timer.Elapsed -= OnTimeEvent; 
+										DrawerProvider.Drawer.GameOver();
+										timer.Elapsed -= OnTimedEvent; 
 										return true;
 								}
 								else
@@ -78,27 +77,21 @@ namespace Tetris
 								return false;
 				}
 
-				private static void GameOver()
+				private static Result HandleKey(Figure f, ConsoleKey key)
 				{
-						Console.SetCursorPosition(Field.Width / 2 - 8, Field.Height);
-						Console.WriteLine("GAME OVER");
-				}
-
-				private static Result HandleKey(Figure currentFigure, ConsoleKeyInfo key)
-				{
-						switch (key.Key)
+						switch (key)
 						{
 								case ConsoleKey.RightArrow:
-										return currentFigure.TryMove(Direction.RIGHT);
+										return f.TryMove(Direction.RIGHT);
 								case ConsoleKey.LeftArrow:
-										return currentFigure.TryMove(Direction.LEFT);
+										return f.TryMove(Direction.LEFT);
 								case ConsoleKey.DownArrow:
-										return currentFigure.TryMove(Direction.DOWN);
+										return f.TryMove(Direction.DOWN);
 								case ConsoleKey.Spacebar:
-										return currentFigure.TryRotate();
-								default:
-										return Result.SUCCESS;
+										return f.TryRotate();	
 						}
+
+						return Result.SUCCESS;
 				}
 		}
 }
